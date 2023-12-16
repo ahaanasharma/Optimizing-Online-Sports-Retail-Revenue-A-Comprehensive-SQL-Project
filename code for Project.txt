@@ -1,0 +1,71 @@
+CREATE DATABASE PROJECT;
+USE PROJECT;
+CREATE TABLE Products (
+ProductID INT PRIMARY KEY,
+ProductName VARCHAR(255),
+Price DECIMAL(10, 2),
+Category VARCHAR(50)
+);
+
+CREATE TABLE Customers (
+CustomerID INT PRIMARY KEY,
+FirstName VARCHAR(50),
+LastName VARCHAR(50),
+Email VARCHAR(100),
+Phone VARCHAR(20)
+);
+
+CREATE TABLE Orders (
+OrderID INT PRIMARY KEY,
+CustomerID INT,
+ProductID INT,
+OrderDate DATE,
+Quantity INT,
+TotalAmount DECIMAL(10, 2),
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+
+
+-- Insert into Products
+INSERT INTO Products VALUES (1, 'Football', 29.99, 'Sports Equipment');
+INSERT INTO Products VALUES (2, 'Basketball', 19.99, 'Sports Equipment');
+-- Add more products as needed
+
+-- Insert into Customers
+INSERT INTO Customers VALUES (1, 'John', 'Doe', 'john.doe@email.com', '123-456-7890');
+INSERT INTO Customers VALUES (2, 'Jane', 'Smith', 'jane.smith@email.com', '987-654-3210');
+-- Add more customers as needed
+
+-- Insert into Orders
+INSERT INTO Orders VALUES (1, 1, 1, '2023-01-15', 2, 59.98);
+INSERT INTO Orders VALUES (2, 2, 2, '2023-02-20', 1, 19.99);
+
+op-selling products:
+SELECT ProductName, SUM(Quantity) AS TotalQuantitySold
+FROM Products
+JOIN Orders ON Products.ProductID = Orders.ProductID
+GROUP BY ProductName
+ORDER BY TotalQuantitySold DESC;
+
+Customer spending habits:
+SELECT FirstName, LastName, SUM(TotalAmount) AS TotalSpent
+FROM Customers
+JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+GROUP BY FirstName, LastName
+ORDER BY TotalSpent DESC;
+
+Monthly revenue:
+SELECT MONTH(OrderDate) AS Month, SUM(TotalAmount) AS MonthlyRevenue
+FROM Orders
+GROUP BY MONTH(OrderDate)
+ORDER BY Month;
+
+Revenue by category:
+SELECT Category, SUM(TotalAmount) AS CategoryRevenue
+FROM Products
+JOIN Orders ON Products.ProductID = Orders.ProductID
+GROUP BY Category
+ORDER BY CategoryRevenue DESC;
+
